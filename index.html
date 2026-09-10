@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#111827">
+<title>My Barber Shop - Point of Sale</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: #f3f4f6;
+  color: #111827;
+  padding-bottom: 40px;
+}
+
+header {
+  background: #111827;
+  color: white;
+  padding: 22px 16px 18px;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+}
+
+header h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+header p {
+  margin: 4px 0 0;
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 12px;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+}
+
+.card-title {
+  margin: 0 0 14px;
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #111827;
+}
+
+.badge {
+  background: #f3f4f6;
+  color: #4b5563;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+/* Service Quick Grid */
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.service-card {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.service-card:active {
+  transform: scale(0.97);
+  background: #f0fdf4;
+  border-color: #16a34a;
+}
+
+.service-card-name {
+  font-weight: 700;
+  font-size: 15px;
+  color: #111827;
+  margin-bottom: 4px;
+  word-break: break-word;
+}
+
+.service-card-cost {
+  font-size: 16px;
+  font-weight: 800;
+  color: #059669;
+  margin-bottom: 10px;
+}
+
+.btn-record {
+  background: #16a34a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 6px;
+  font-size: 13px;
+  font-weight: 700;
+  width: 100%;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(22, 163, 74, 0.2);
+}
+
+/* Revenue Box */
+.total-box {
+  background: #111827;
+  color: white;
+  border-radius: 14px;
+  padding: 18px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.total-label {
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #9ca3af;
+  font-weight: 600;
+}
+
+.total-amount {
+  font-size: 38px;
+  font-weight: 900;
+  color: #10b981;
+  margin-top: 4px;
+  line-height: 1.1;
+}
+
+.sales-list {
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.sale-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.sale-row:last-child {
+  border-bottom: none;
+}
+
+.sale-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.sale-service {
+  font-weight: 700;
+  font-size: 15px;
+  color: #1f2937;
+}
+
+.sale-time {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+.sale-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sale-cost {
+  font-weight: 800;
+  font-size: 16px;
+  color: #111827;
+}
+
+/* Inputs & Buttons */
+label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #4b5563;
+  margin-bottom: 4px;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 16px;
+  background: #ffffff;
+  color: #111827;
+}
+
+input:focus {
+  outline: none;
+  border-color: #111827;
+}
+
+button {
+  border: none;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+button:active {
+  opacity: 0.85;
+}
+
+.btn-primary {
+  background: #111827;
+  color: white;
+  width: 100%;
+}
+
+.btn-delete {
+  background: #fee2e2;
+  color: #dc2626;
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
+.btn-edit {
+  background: #e0f2fe;
+  color: #0284c7;
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
+.btn-clear {
+  background: #f3f4f6;
+  color: #4b5563;
+  width: 100%;
+  margin-top: 10px;
+  border: 1px solid #e5e7eb;
+}
+
+.btn-backup {
+  background: #2563eb;
+  color: white;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.btn-restore {
+  background: #4b5563;
+  color: white;
+  width: 100%;
+}
+
+.service-manage-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.service-manage-item:last-child {
+  border-bottom: none;
+}
+
+.action-btns {
+  display: flex;
+  gap: 6px;
+}
+
+.empty-state {
+  text-align: center;
+  color: #9ca3af;
+  padding: 20px 0;
+  font-size: 14px;
+}
+
+/* Modal */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-content {
+  background: white;
+  width: 100%;
+  max-width: 450px;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.btn-cancel {
+  background: #e5e7eb;
+  color: #374151;
+  flex: 1;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>✂️ My Barber Shop</h1>
+  <p>Online POS & Service Sales Tracker</p>
+</header>
+
+<div class="container">
+
+  <!-- Record Sale Section -->
+  <div class="card">
+    <div class="card-title">
+      <span>Record Sale</span>
+      <span class="badge">Tap Service</span>
+    </div>
+    <div id="quickServiceGrid" class="service-grid"></div>
+  </div>
+
+  <!-- Today's Sales Card -->
+  <div class="card">
+    <div class="card-title">
+      <span>Today's Sales</span>
+      <span class="badge" id="salesCount">0 sales</span>
+    </div>
+
+    <div class="total-box">
+      <div class="total-label">Today's Total Revenue</div>
+      <div class="total-amount" id="todayTotal">0</div>
+    </div>
+
+    <div id="salesList" class="sales-list"></div>
+
+    <button type="button" class="btn-clear" onclick="clearTodaySales()">
+      Clear Today's Sales
+    </button>
+  </div>
+
+  <!-- Service Management -->
+  <div class="card">
+    <div class="card-title">
+      <span>Services & Pricing</span>
+      <span class="badge" id="servicesCount">0</span>
+    </div>
+
+    <!-- Add Service Form -->
+    <form id="addServiceForm" onsubmit="handleAddService(event)">
+      <div style="display: flex; gap: 8px;">
+        <div style="flex: 2;">
+          <label for="newServiceName">Service Name</label>
+          <input id="newServiceName" type="text" placeholder="e.g. Haircut" required>
+        </div>
+        <div style="flex: 1;">
+          <label for="newServiceCost">Cost</label>
+          <input id="newServiceCost" type="number" step="1" min="0" inputmode="numeric" placeholder="300" required>
+        </div>
+      </div>
+      <button type="submit" class="btn-primary">+ Add New Service</button>
+    </form>
+
+    <hr style="border: 0; border-top: 1px solid #f3f4f6; margin: 16px 0;">
+
+    <div id="manageServicesList"></div>
+  </div>
+
+  <!-- Backup & Restore -->
+  <div class="card">
+    <div class="card-title">
+      <span>Data Backup & Restore</span>
+    </div>
+    <p style="font-size: 13px; color: #6b7280; margin-top: 0; margin-bottom: 12px;">
+      Export your services and sales data to a file for safekeeping, or restore from a file backup.
+    </p>
+    <button type="button" class="btn-backup" onclick="exportData()">📥 Export Backup (JSON)</button>
+    
+    <button type="button" class="btn-restore" onclick="document.getElementById('importFileInput').click()">📤 Import Backup File</button>
+    <input type="file" id="importFileInput" accept=".json" style="display: none;" onchange="importData(event)">
+  </div>
+
+</div>
+
+<!-- Edit Service Modal -->
+<div id="editModal" class="modal-overlay">
+  <div class="modal-content">
+    <h3 style="margin-top: 0; margin-bottom: 12px;">Edit Service</h3>
+    <form id="editServiceForm" onsubmit="handleSaveEdit(event)">
+      <input type="hidden" id="editServiceId">
+      <label for="editServiceName">Service Name</label>
+      <input id="editServiceName" type="text" required>
+      
+      <label for="editServiceCost">Cost</label>
+      <input id="editServiceCost" type="number" min="0" step="1" inputmode="numeric" required>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+        <button type="submit" class="btn-primary" style="flex: 1;">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+// Initial Defaults
+const DEFAULT_SERVICES = [
+  { id: 101, name: "Haircut", cost: 300 },
+  { id: 102, name: "Beard Trim", cost: 150 }
+];
+
+let services = JSON.parse(localStorage.getItem("barberServices")) || DEFAULT_SERVICES;
+let sales = JSON.parse(localStorage.getItem("barberSales")) || [];
+
+function saveData() {
+  localStorage.setItem("barberServices", JSON.stringify(services));
+  localStorage.setItem("barberSales", JSON.stringify(sales));
+}
+
+function getTodayString() {
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function recordSale(serviceId) {
+  const service = services.find(s => s.id === serviceId);
+  if (!service) return;
+
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+  const saleRecord = {
+    id: Date.now(),
+    service: service.name,
+    cost: Number(service.cost),
+    date: getTodayString(),
+    time: timeStr
+  };
+
+  sales.push(saleRecord);
+  saveData();
+  render();
+
+  if (navigator.vibrate) {
+    navigator.vibrate(40);
+  }
+}
+
+function deleteSale(saleId) {
+  sales = sales.filter(s => s.id !== saleId);
+  saveData();
+  render();
+}
+
+function clearTodaySales() {
+  const todayStr = getTodayString();
+  const todaySalesCount = sales.filter(s => s.date === todayStr || !s.date).length;
+
+  if (todaySalesCount === 0) {
+    alert("No sales recorded today to clear.");
+    return;
+  }
+
+  if (confirm("Clear today's recorded sales?")) {
+    sales = sales.filter(s => s.date && s.date !== todayStr);
+    saveData();
+    render();
+  }
+}
+
+function handleAddService(event) {
+  event.preventDefault();
+  const nameInput = document.getElementById("newServiceName");
+  const costInput = document.getElementById("newServiceCost");
+
+  const name = nameInput.value.trim();
+  const cost = Number(costInput.value);
+
+  if (!name || isNaN(cost) || cost < 0) {
+    alert("Please enter a valid service name and cost.");
+    return;
+  }
+
+  services.push({
+    id: Date.now(),
+    name: name,
+    cost: cost
+  });
+
+  nameInput.value = "";
+  costInput.value = "";
+
+  saveData();
+  render();
+}
+
+function deleteService(serviceId) {
+  if (confirm("Delete this service?")) {
+    services = services.filter(s => s.id !== serviceId);
+    saveData();
+    render();
+  }
+}
+
+function openEditModal(serviceId) {
+  const service = services.find(s => s.id === serviceId);
+  if (!service) return;
+
+  document.getElementById("editServiceId").value = service.id;
+  document.getElementById("editServiceName").value = service.name;
+  document.getElementById("editServiceCost").value = service.cost;
+  
+  document.getElementById("editModal").style.display = "flex";
+}
+
+function closeEditModal() {
+  document.getElementById("editModal").style.display = "none";
+}
+
+function handleSaveEdit(event) {
+  event.preventDefault();
+  const id = Number(document.getElementById("editServiceId").value);
+  const name = document.getElementById("editServiceName").value.trim();
+  const cost = Number(document.getElementById("editServiceCost").value);
+
+  if (!name || isNaN(cost) || cost < 0) {
+    alert("Please enter a valid name and cost.");
+    return;
+  }
+
+  const idx = services.findIndex(s => s.id === id);
+  if (idx !== -1) {
+    services[idx].name = name;
+    services[idx].cost = cost;
+    saveData();
+    render();
+  }
+  closeEditModal();
+}
+
+function exportData() {
+  const data = {
+    version: 1,
+    exportDate: new Date().toISOString(),
+    services: services,
+    sales: sales
+  };
+
+  const jsonStr = JSON.stringify(data, null, 2);
+  const blob = new Blob([jsonStr], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `barber_shop_backup_${getTodayString()}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const imported = JSON.parse(e.target.result);
+      if (imported && Array.isArray(imported.services) && Array.isArray(imported.sales)) {
+        if (confirm("Importing backup will replace current browser data. Continue?")) {
+          services = imported.services;
+          sales = imported.sales;
+          saveData();
+          render();
+          alert("Data restored successfully!");
+        }
+      } else {
+        alert("Invalid backup file format.");
+      }
+    } catch (err) {
+      alert("Error reading backup file: " + err.message);
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = "";
+}
+
+function render() {
+  const todayStr = getTodayString();
+
+  // 1. Render Quick Service Grid
+  const quickGrid = document.getElementById("quickServiceGrid");
+  if (services.length === 0) {
+    quickGrid.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;">No services added yet.</div>`;
+  } else {
+    quickGrid.innerHTML = services.map(s => `
+      <div class="service-card" onclick="recordSale(${s.id})">
+        <div>
+          <div class="service-card-name">${escapeHTML(s.name)}</div>
+          <div class="service-card-cost">${formatCurrency(s.cost)}</div>
+        </div>
+        <button type="button" class="btn-record">+ Record Sale</button>
+      </div>
+    `).join("");
+  }
+
+  // 2. Render Today's Sales
+  const todaysSales = sales.filter(s => s.date === todayStr || !s.date);
+  document.getElementById("salesCount").textContent = `${todaysSales.length} sale${todaysSales.length === 1 ? '' : 's'}`;
+
+  const todayTotal = todaysSales.reduce((sum, s) => sum + Number(s.cost), 0);
+  document.getElementById("todayTotal").textContent = formatCurrency(todayTotal);
+
+  const salesList = document.getElementById("salesList");
+  if (todaysSales.length === 0) {
+    salesList.innerHTML = `<div class="empty-state">No sales recorded today yet.</div>`;
+  } else {
+    salesList.innerHTML = todaysSales.slice().reverse().map(s => `
+      <div class="sale-row">
+        <div class="sale-info">
+          <span class="sale-service">${escapeHTML(s.service)}</span>
+          <span class="sale-time">${s.time || ''}</span>
+        </div>
+        <div class="sale-right">
+          <span class="sale-cost">${formatCurrency(s.cost)}</span>
+          <button type="button" class="btn-delete" title="Delete Sale" onclick="deleteSale(${s.id})">✕</button>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  // 3. Render Service Management List
+  document.getElementById("servicesCount").textContent = `${services.length} services`;
+  const manageList = document.getElementById("manageServicesList");
+  if (services.length === 0) {
+    manageList.innerHTML = `<div class="empty-state">No services added.</div>`;
+  } else {
+    manageList.innerHTML = services.map(s => `
+      <div class="service-manage-item">
+        <div>
+          <div style="font-weight: 700; font-size: 15px;">${escapeHTML(s.name)}</div>
+          <div style="color: #059669; font-weight: 700; font-size: 14px;">${formatCurrency(s.cost)}</div>
+        </div>
+        <div class="action-btns">
+          <button type="button" class="btn-edit" onclick="openEditModal(${s.id})">Edit</button>
+          <button type="button" class="btn-delete" onclick="deleteService(${s.id})">Delete</button>
+        </div>
+      </div>
+    `).join("");
+  }
+}
+
+function formatCurrency(amount) {
+  return Number(amount).toLocaleString();
+}
+
+function escapeHTML(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+render();
+</script>
+</body>
+</html>
